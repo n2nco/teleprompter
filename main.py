@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import os
 import random
 import json
@@ -91,6 +91,15 @@ def random_words():
 @APP.route('/')
 def index():
     return render_template('index.html')
+
+
+@APP.route('/text', methods=['POST'])
+def text():
+  text = request.form['text']
+  print('input text from client: ', text)
+  return json.dumps({'suggestions': get_suggestions(text)})
+
+
 
 @APP.route('/stream')
 def speech():

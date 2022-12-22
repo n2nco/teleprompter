@@ -16,24 +16,116 @@
 <div class="container">
     <div class="row">
         <div class="col">
-        <h1>Teleprompter</h1>
-            
+        <h1>Voice Teleprompter</h1>
+
         <div id="current-transcript-container" class="col-sm-5" style="margin-top:10px; height:10rem; border: 1px solid rgba(250, 250, 250, 0.125); padding:1rem 1rem;">
-            <div id="current-transcript">Loading...</div>
+          
+          
+            <div id="current-transcript">...</div>
+
+        
+            <button onclick="startVoiceStream()">Start voice stream</button>
+            <button onclick="endVoiceStream()">End voice stream</button>
+
+              <script>
+              function startVoiceStream() {
+                window.stream()
+              }
+              function endVoiceStream() {
+                window.stream(endStream=true)
+              }
+              </script>
         </div>
         </div></div>
         <div class="row suggestion-list row-cols-md-2 g-4 col-sm-5" style="margin-top:20px; width:43.4%;">
         <div class="suggestion col">
             <div class="card mb-3" style="max-width: 18rem;">
                 <div class="card-body" style="height:8rem;">
-                  <h5 class="card-title" style="font-size:0.9rem; text-overflow: ellipsis; overflow: hidden;">Loading...</h5>
+                  <h5 class="card-title" style="font-size:0.9rem; text-overflow: ellipsis; overflow: hidden;">...</h5>
                   <!--<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>-->
                 </div>
             </div></div>
+            </div><div>
+         
+            <style>
+              .right-column {
+                position: absolute;
+                top: 30px;
+                right: 0;
+                width: 500px;
+              }
+              form {
+                  width: 300px;
+                }
+                input[type="text"] {
+                  width: 100%;
+                }
+            </style>
+         
+            <div class="right-column">
+              <h2>Text Teleprompter</h2>
+              <form>
+                <input type="text" name="text" />
+                <input type="submit" value="Submit" />
+              </form>
+       
+              <div class="row suggestion-list-2 row-cols-md-2 g-4 col-sm-5" style="margin-top:20px; width:100%;">
+                <div class="suggestion-2 col">
+                    <div class="card mb-3" style="max-width: 18rem;">
+                        <div class="card-body" style="height:8rem;">
+                          <h5 class="card-title-2" style="font-size:0.9rem; text-overflow: ellipsis; overflow: hidden;">Loading...</h5>
+                          <!--<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>-->
+                        </div>
+                    </div></div>
+                    </div><div>
+            </div>
+
+       
+              <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+              <script>
+       
+              $(document).ready(function() {
+                var suggestion_template = $(".suggestion-2").clone();
+                $('form').submit(function(event) {
+                  event.preventDefault();
+                  var text = $('input[name="text"]').val();
+                  $.ajax({
+                    url: 'http://localhost:5001/text',
+                    type: 'POST',
+                    data: {'text': text},
+                    success: function(response) {
+                      console.log('response:', response)
+                      response = JSON.parse(response)
+                      var suggestions = response.suggestions;
+                      var suggestionHTML = '';
+                      for (var i = 0; i < suggestions.length; i++) {
+                        suggestionHTML += '<p>' + suggestions[i].text + '</p>';
+                      }
+                      console.log(suggestionHTML)
+                      // $('#text-suggestions').html(suggestionHTML);
+                      var suggestions = response.suggestions.map(function(suggestion){
+                          var element = suggestion_template.clone();
+                          if (suggestion.text.length > 150) {
+                              suggestion.text = suggestion.text.substring(0, 150) + "...";
+                          }
+                          element.find('.card-title-2').text(suggestion.text);
+                          
+                          // element.find('.card-subtitle-2').text(suggestion.subtext);
+                          return element;
+                      });
+                      // remove the old suggestions
+                      $(".suggestion-list-2").empty();
+                      // add the new suggestions
+                      $(".suggestion-list-2").append(suggestions);
+                    }
+                  });
+                });
+              });
+            </script>
         
     </div>
 </div>
-</div>
+
 
 {% endblock %}
 
