@@ -12,4 +12,5 @@ https://user-images.githubusercontent.com/279531/208549243-56047321-4ed1-47d6-bd
 * It must be launched within Terminal, not iTerm or VS Code's integrated terminal, for `hear` to appropriately request Speech Recognition and Microphone permissions. See https://github.com/sveinbjornt/hear/issues/15
 * It would be trivial to add whisper, feel free to do so and send me a pull request.
 
-
+This fork adds a text input column to this demo:
+![](demo-screenshot-w-text.png)
